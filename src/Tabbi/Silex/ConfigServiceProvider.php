@@ -33,8 +33,9 @@ class ConfigServiceProvider implements ServiceProviderInterface
 
     public function register(Application $app)
     {
-
-        $app['config'] = $app->share(function ($app) {
+        // php 5.3 fix
+        $self = $this;
+        $app['config'] = $app->share(function() use($app, $self) {
             return new Config($this->driver);
         });
     }
