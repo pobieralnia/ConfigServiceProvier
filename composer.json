@@ -1,0 +1,30 @@
+{
+    "name": "tabbi/config-service-provider",
+    "description": "A config ServiceProvider for Silex with support for php, json and yaml.",
+    "keywords": ["silex"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomasz Lopusiewicz",
+            "email": "tomasz.pobieralnia@gmail.com"
+        },
+        {
+            "name": "Contributors",
+            "homepage": "https://github.com/tabbi/ConfigServiceProvider/contributors"
+        }
+    ],
+    "require": {
+        "silex/silex": "~1.1"
+    },
+    "require-dev": {
+        "symfony/yaml": "~2.3",
+        "jamesmoss/toml": "~0.1"
+    },
+    "suggest": {
+        "symfony/yaml": "~2.3",
+        "jamesmoss/toml": "~0.1"
+    },
+    "autoload": {
+        "psr-0": { "Tabbi\\Silex": "src" }
+    }
+}
