@@ -38,7 +38,7 @@ final class Config implements ConfigInterface {
 	{
 		$configTmp = $this->readConfig($filename);
         $configFileName = $this->driver->getFileName($filename);
-        
+
         $config[$configFileName] = $configTmp;
 		$this->config = array_merge($this->config, $config);
 	}

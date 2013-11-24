@@ -14,9 +14,15 @@
 
 use Silex\Application;
 use Tabbi\Silex\ConfigServiceProvider;
+use Tabbi\Silex\ChainConfigDriver;
+use Tabbi\Silex\PhpConfigDriver;
+use Tabbi\Silex\YamlConfigDriver;
+use Tabbi\Silex\JsonConfigDriver;
+use Tabbi\Silex\TomlConfigDriver;
+use Tabbi\Silex\Config;
 
 /**
- * Test file format and file name
+ * Test Config access
  * 
  * @author Igor Wiedler <igor@wiedler.ch>
  * @author Jérôme Macias <jerome.macias@gmail.com>
@@ -29,13 +35,41 @@ class ConfigServiceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyConfigs($filename)
     {
-        $readConfigMethod = new \ReflectionMethod('Tabbi\Silex\ConfigServiceProvider', 'readConfig');
+        $driver = new Config(new ChainConfigDriver(array(
+            new PhpConfigDriver(),
+            new YamlConfigDriver(),
+            new JsonConfigDriver(),
+            new TomlConfigDriver(),
+        )));
+
+        $readConfigMethod = new \ReflectionMethod($driver, 'readConfig');
         $readConfigMethod->setAccessible(true);
 
-        $this->assertEquals(
-            array(),
-            $readConfigMethod->invoke(new ConfigServiceProvider($filename))
-        );
+        $this->assertEquals(array(), $readConfigMethod->invokeArgs($driver, array($filename)));
+    }
+
+    /**
+     * @dataProvider provideFilenames
+     */
+    public function testConfigs($filename)
+    {
+        $app = new Application();
+        $app->register(new ConfigServiceProvider());
+        $app['config']->add($filename);
+
+        $this->assertEquals("pdo_mysql", $app['config']->get('config_base.db.driver'));
+    }
+
+    /**
+     * @dataProvider provideFilenames
+     */
+    public function testNoExsistingKey($filename)
+    {
+        $app = new Application();
+        $app->register(new ConfigServiceProvider());
+        $app['config']->add($filename);
+
+        $this->assertNull($app['config']->get('config_base.db.driver.ble.ble.ble'));
     }
 
     /**
@@ -75,20 +109,10 @@ class ConfigServiceProviderTest extends \PHPUnit_Framework_TestCase
     public function provideFilenames()
     {
         return array(
-            array(__DIR__."/Fixtures/config.php"),
-            array(__DIR__."/Fixtures/config.json"),
-            array(__DIR__."/Fixtures/config.yml"),
-            array(__DIR__."/Fixtures/config.toml"),
-        );
-    }
-
-    public function provideReplacementFilenames()
-    {
-        return array(
-            array(__DIR__."/Fixtures/config_replacement.php"),
-            array(__DIR__."/Fixtures/config_replacement.json"),
-            array(__DIR__."/Fixtures/config_replacement.yml"),
-            array(__DIR__."/Fixtures/config_replacement.toml"),
+            array(__DIR__."/Fixtures/config_base.php"),
+            array(__DIR__."/Fixtures/config_base.json"),
+            array(__DIR__."/Fixtures/config_base.yml"),
+            array(__DIR__."/Fixtures/config_base.toml"),
         );
     }
 

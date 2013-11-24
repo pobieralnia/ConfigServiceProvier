@@ -1,11 +1,11 @@
 <?php
 
 return array(
-    'db.options' => array(
+    'db' => array(
         'driver' => 'pdo_mysql',
         'charset' => 'utf8',
     ),
-    'myproject.test' => array(
+    'myproject' => array(
         'param1' => '123',
         'param2' => '123',
         'param3' => array(
@@ -14,5 +14,5 @@ return array(
         ),
         'param4' => array(1, 2, 3),
      ),
-     'test.noparent.key' => array(),
+     'test' => array(),
 );
