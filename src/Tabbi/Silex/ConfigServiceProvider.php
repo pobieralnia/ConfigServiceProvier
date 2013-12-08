@@ -20,8 +20,9 @@ use Silex\ServiceProviderInterface;
 class ConfigServiceProvider implements ServiceProviderInterface
 {
     private $driver;
+    private $path;
 
-    public function __construct(ConfigDriver $driver = null)
+    public function __construct($path = null, ConfigDriver $driver = null)
     {
         $this->driver = $driver ?: new ChainConfigDriver(array(
             new PhpConfigDriver(),
@@ -29,13 +30,15 @@ class ConfigServiceProvider implements ServiceProviderInterface
             new JsonConfigDriver(),
             new TomlConfigDriver(),
         ));
+
+        $this->path = $path;
     }
 
     public function register(Application $app)
     {
         $driver = $this->driver;
         $app['config'] = $app->share(function() use($app, &$driver) {
-            return new Config($driver);
+            return new Config($driver, $this->path);
         });
     }
 

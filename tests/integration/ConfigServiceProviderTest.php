@@ -73,6 +73,17 @@ class ConfigServiceProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group autoload
+     */
+    public function testAutoload()
+    {
+        $app = new Application();
+        $app->register(new ConfigServiceProvider(__DIR__."/Fixtures/Autoload/"));
+        $this->assertEquals("test", $app['config']->get('db.test'));
+        $this->assertEquals("test2", $app['config']->get('db2.test'));
+    }
+
+    /**
      * @test
      * @expectedException RuntimeException
      * @expectedExceptionMessage Invalid JSON provided "Syntax error" in

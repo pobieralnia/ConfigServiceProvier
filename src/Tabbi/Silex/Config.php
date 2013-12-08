@@ -23,9 +23,29 @@ final class Config implements ConfigInterface {
      * 
      * @param ConfigDriver $driver
      */
-	public function __construct(ConfigDriver $driver)
+	public function __construct(ConfigDriver $driver, $path = null)
 	{
 		$this->driver = $driver;
+
+        // try to autoload all files in directory
+        if($path)
+        {
+            if ($handle = opendir($path))
+            {
+                while (false !== ($entry = readdir($handle)))
+                {
+                    if ($entry == '.' || $entry == '..') continue;
+
+                    $this->add($path . $entry);
+                }
+
+                closedir($handle);
+            }
+            else
+            {
+                throw new \RuntimeException('A valid configuration path must be passed before reading configs.');
+            }
+        }
 	}
 
     /**
